@@ -23,12 +23,12 @@ int main()
     DDPSolver<double,STATE_NB,COMMAND_NB>::commandVec_t u;
 
     xinit << 0.0,0.0,0.0;
-    xDes << 1.0,0.0,0.0;
+    xDes << 0.0,150.0,0.0;
 
-    double t_end = 0.1;//3*60;
-    double dt=1e-3;
+    double t_end = 0.05;//3*60;
+    double dt=1e-5;
     unsigned int T = (unsigned int)(t_end/dt);
-    unsigned int iterMax = 20;
+    unsigned int iterMax = 100;
     double stopCrit = 10;
     DDPSolver<double,STATE_NB,COMMAND_NB>::stateVecTab_t xList;
     DDPSolver<double,STATE_NB,COMMAND_NB>::commandVecTab_t uList;
@@ -37,7 +37,7 @@ int main()
     DCMotor model(dt);
     DCMotor* noisyModel=NULL;
     CostDC cost;
-    DDPSolver<double,STATE_NB,COMMAND_NB> solver(model,cost,DISABLE_FULLDDP,DISABLE_QPBOX);
+    DDPSolver<double,STATE_NB,COMMAND_NB> solver(model,cost,DISABLE_FULLDDP,ENABLE_QPBOX);
     solver.FirstInitSolver(xinit,xDes,T,dt,iterMax,stopCrit);
 
     int N = 100;
@@ -65,7 +65,7 @@ int main()
     ofstream fichier1("results1.csv",ios::out | ios::trunc);
     if(fichier1)
     {
-        fichier1 << "q,qdot,i" << endl;
+        fichier1 << "q,qdot,tau,i" << endl;
         fichier1 << T << "," << STATE_NB << "," << COMMAND_NB << endl;
         u << uList[0];
         x = xinit;

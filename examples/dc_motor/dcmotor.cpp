@@ -9,9 +9,7 @@
 /*
  * x0 -> actuator position
  * x1 -> actuator speed
- * x2 -> motor temperature
- * x3 -> external torque
- * x4 -> ambiant temperature
+ * x2 -> external torque
  */
 
 DCMotor::DCMotor(double& mydt,bool noiseOnParameters)
@@ -22,15 +20,15 @@ DCMotor::DCMotor(double& mydt,bool noiseOnParameters)
 
     if(!noiseOnParameters)
     {
-        J = 1e-1;
+        J = 1e-5;
         K_M = 60.3e-3;
-        f = 3e1;
+        f = 3e-3;
     }
     else
     {
-        J = 1e-1;
+        J = 1e-5;
         K_M = 60.3e-3;
-        f = 3e1;
+        f = 3e-3;
     }
 
     Id.setIdentity();
@@ -60,8 +58,8 @@ DCMotor::DCMotor(double& mydt,bool noiseOnParameters)
     QuuCont.setZero();
     QuxCont.setZero();
 
-    lowerCommandBounds << -1.0;
-    upperCommandBounds << 1.0;
+    lowerCommandBounds << -10.0;
+    upperCommandBounds << 10.0;
 }
 
 DCMotor::stateVec_t DCMotor::computeDeriv(double& , const stateVec_t& X, const commandVec_t &U)
