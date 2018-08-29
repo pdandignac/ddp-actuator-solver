@@ -19,8 +19,9 @@ private:
     double J;
     double K_M;
     double f_VL;
-    double R_th;
-    double tau_th;
+    double R_TA;
+    double R_TH;
+    double C_TH;
 private:
     stateVec_t Xreal,dX;
     stateVec_t x_next,k1,k2,k3,k4;

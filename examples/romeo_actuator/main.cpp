@@ -11,28 +11,31 @@
 using namespace std;
 using namespace Eigen;
 
+#define STATE_NB 4
+#define COMMAND_NB 1
+
 int main()
 {
     struct timeval tbegin,tend;
     double texec=0.0;
-    DDPSolver<double,4,1>::stateVec_t xinit,xDes,x;
-    DDPSolver<double,4,1>::commandVec_t u;
+    DDPSolver<double,STATE_NB,COMMAND_NB>::stateVec_t xinit,xDes,x;
+    DDPSolver<double,STATE_NB,COMMAND_NB>::commandVec_t u;
 
-    xinit << -1.0,0.0,-100.0,0.0;
-    xDes << 0.5,0.0,0.0,0.0;
+    xinit << 0.0,0.0,0.0,0.0;
+    xDes << 1.0,0.0,100.0,0.0;
 
     unsigned int T = 3000;
     double dt=1e-3;
-    unsigned int iterMax = 100;
-    double stopCrit = 1e-5;
-    DDPSolver<double,4,1>::stateVecTab_t xList;
-    DDPSolver<double,4,1>::commandVecTab_t uList;
-    DDPSolver<double,4,1>::traj lastTraj;
+    unsigned int iterMax = 25;
+    double stopCrit = 1000;//1e-5;
+    DDPSolver<double,STATE_NB,COMMAND_NB>::stateVecTab_t xList;
+    DDPSolver<double,STATE_NB,COMMAND_NB>::commandVecTab_t uList;
+    DDPSolver<double,STATE_NB,COMMAND_NB>::traj lastTraj;
 
     RomeoSimpleActuator romeoActuatorModel(dt);
     RomeoSimpleActuator* romeoNoisyModel=NULL;
     CostFunctionRomeoActuator costRomeoActuator;
-    DDPSolver<double,4,1> testSolverRomeoActuator(romeoActuatorModel,costRomeoActuator,DISABLE_FULLDDP,DISABLE_QPBOX);
+    DDPSolver<double,STATE_NB,COMMAND_NB> testSolverRomeoActuator(romeoActuatorModel,costRomeoActuator,DISABLE_FULLDDP,DISABLE_QPBOX);
     testSolverRomeoActuator.FirstInitSolver(xinit,xDes,T,dt,iterMax,stopCrit);
 
     int N = 100;
@@ -60,7 +63,8 @@ int main()
     ofstream fichier1("results1.csv",ios::out | ios::trunc);
     if(fichier1)
     {
-        fichier1 << "tau,tauDot,q,qDot,u" << endl;
+        fichier1 << "q,q_dot,theta,theta_dot,u" << endl;
+        fichier1 << T << "," << STATE_NB << "," << COMMAND_NB << endl;
         x = xinit;
         fichier1 << x(0, 0) << "," << x(1, 0) << "," << x(2, 0) << ","
                  << x(3, 0) << "," << uList[0] << endl;

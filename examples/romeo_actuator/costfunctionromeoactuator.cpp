@@ -6,7 +6,7 @@ CostFunctionRomeoActuator::CostFunctionRomeoActuator()
             0.0,0.01,0.0,0.0,
             0.0,0.0,0.0,0.0,
             0.0,0.0,0.0,0.0;
-    R << 0.0001;
+    R << 0.001;
 
     lxx = Q;
     luu = R;

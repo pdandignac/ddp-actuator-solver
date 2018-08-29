@@ -11,6 +11,8 @@ private:
     stateMat_t Q;
     commandMat_t R;
     double dt;
+    double a;
+    double Tmax;
 protected:
     // attributes //
 public:

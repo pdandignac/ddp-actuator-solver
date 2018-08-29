@@ -22,19 +22,21 @@ DCTemp::DCTemp(double& mydt,bool noiseOnParameters)
 
     if(!noiseOnParameters)
     {
-        J = 119e-7;
-        K_M=77.1e-3;
-        f_VL=0.429e-6;
-        R_th=2.8;
-        tau_th=15.7;
+        J = 1e-3*1e-1;
+        K_M=2.5*60.3e-2;
+        f_VL=1e-3*3e1;
+        R_TA=0.3*1.0e1;
+        R_TH=1.84;
+        C_TH=1e-2*1.77e3;
     }
     else
     {
-        J = 119e-17;
-        K_M=77.1e-3;
-        f_VL=0.429e-6;
-        R_th=2.8;
-        tau_th=15.7;
+        J = 1e-1;
+        K_M=60.3e-1;
+        f_VL=3e1;
+        R_TA=1.0e0;
+        R_TH=1.84;
+        C_TH=1.77e3;
     }
 
     Id.setIdentity();
@@ -68,7 +70,7 @@ DCTemp::stateVec_t DCTemp::computeDeriv(double& , const stateVec_t& X, const com
 {
     dX[0] = X[1];
     dX[1] = (K_M/J)*U[0] - (f_VL/J)*X[1] - (1.0/J)*X[3];
-    dX[2] = R_th*U[0]*U[0] - (X[2]-X[4])/tau_th;
+    dX[2] = (R_TA/C_TH)*U[0]*U[0] - (1.0/(R_TH*C_TH))*(X[2]-X[4]);
     dX[3] = 0.0;
     dX[4] = 0.0;
     //std::cout << dX.transpose() << std::endl;
@@ -89,8 +91,11 @@ void DCTemp::computeAllModelDeriv(double& dt, const stateVec_t& X,const commandV
 {
     double dh = 1e-7;
     stateVec_t Xp,Xm;
+    commandVec_t Up,Um;
     Xp = X;
     Xm = X;
+    Up = U;
+    Um = U;
     for(unsigned int i=0;i<stateNb;i++)
     {
         Xp[i] += dh/2;
@@ -98,6 +103,14 @@ void DCTemp::computeAllModelDeriv(double& dt, const stateVec_t& X,const commandV
         fx.col(i) = (computeNextState(dt, Xp, U) - computeNextState(dt, Xm, U))/dh;
         Xp = X;
         Xm = X;
+    }
+    for(unsigned int i=0;i<commandNb;i++)
+    {
+        Up[i] += dh/2;
+        Um[i] -= dh/2;
+        fu.col(i) = (computeNextState(dt, X, Up) - computeNextState(dt, X, Um))/dh;
+        Up = U;
+        Um = U;
     }
 }
 
