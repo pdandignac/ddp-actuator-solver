@@ -15,6 +15,8 @@ SET(source_files
   romeo_actuator/romeotorqueactuator.cpp
   temperature_control/costtemp.cpp
   temperature_control/dctemp.cpp
+  dc_motor/cost.cpp
+  dc_motor/dcmotor.cpp
 )
 
 ADD_LIBRARY(${PROJECT_NAME} SHARED ${source_files})
@@ -23,3 +25,4 @@ PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} eigen3)
 
 ADD_SUBDIRECTORY(romeo_actuator)
 ADD_SUBDIRECTORY(temperature_control)
+ADD_SUBDIRECTORY(dc_motor)
